@@ -1,4 +1,5 @@
 // Copyright (c) 2012 The Bitcoin developers
+// Copyright (c) 2014 Primecoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef CHECKQUEUE_H
@@ -24,6 +25,9 @@ template<typename T> class CCheckQueueControl;
   */
 template<typename T> class CCheckQueue {
 private:
+    // Mutex to allow only one control class access at a time
+    boost::mutex controlMutex;
+
     // Mutex to protect the inner state
     boost::mutex mutex;
 
@@ -164,6 +168,8 @@ public:
     CCheckQueueControl(CCheckQueue<T> *pqueueIn) : pqueue(pqueueIn), fDone(false) {
         // passed queue is supposed to be unused, or NULL
         if (pqueue != NULL) {
+            pqueue->controlMutex.lock();
+            boost::unique_lock<boost::mutex> lock(pqueue->mutex);
             assert(pqueue->nTotal == pqueue->nIdle);
             assert(pqueue->nTodo == 0);
             assert(pqueue->fAllOk == true);
@@ -174,6 +180,7 @@ public:
         if (pqueue == NULL)
             return true;
         bool fRet = pqueue->Wait();
+        pqueue->controlMutex.unlock();
         fDone = true;
         return fRet;
     }
