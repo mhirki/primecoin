@@ -1,4 +1,4 @@
-// Copyright (c) 2013 Primecoin developers
+// Copyright (c) 2013-2014 Primecoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -48,6 +48,7 @@ static const uint64 nFractionalDifficultyMax = (1llu << (nFractionalBits + 32));
 static const uint64 nFractionalDifficultyMin = (1llu << 32);
 static const uint64 nFractionalDifficultyThreshold = (1llu << (8 + 32));
 static const unsigned int nWorkTransitionRatio = 32;
+static const unsigned int nWorkTransitionRatioLog = 5; // log_2(32) = 5
 unsigned int TargetGetLimit();
 unsigned int TargetGetInitial();
 unsigned int TargetGetLength(unsigned int nBits);

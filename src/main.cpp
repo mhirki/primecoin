@@ -1,7 +1,7 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
 // Copyright (c) 2009-2012 The Bitcoin developers
 // Copyright (c) 2011-2013 PPCoin developers
-// Copyright (c) 2013 Primecoin developers
+// Copyright (c) 2013-2014 Primecoin developers
 // Distributed under conditional MIT/X11 software license,
 // see the accompanying file COPYING
 
@@ -2224,9 +2224,9 @@ CBigNum CBlockIndex::GetBlockWork() const
     //   fractional multiplier = 1 / meeting target rate
     //       = (TransitionRatio * FractionalDiff) / (TransitionRatio - 1 + FractionalDiff)
     uint64 nFractionalDifficulty = TargetGetFractionalDifficulty(nBits);
-    CBigNum bnWork = 256;
-    for (unsigned int nCount = nTargetMinLength; nCount < TargetGetLength(nBits); nCount++)
-        bnWork *= nWorkTransitionRatio;
+    unsigned int nWorkExp = 8;
+    nWorkExp += nWorkTransitionRatioLog * (TargetGetLength(nBits) - nTargetMinLength);
+    CBigNum bnWork = CBigNum(1) << nWorkExp;
     bnWork *= ((uint64) nWorkTransitionRatio) * nFractionalDifficulty;
     bnWork /= (((uint64) nWorkTransitionRatio - 1) * nFractionalDifficultyMin + nFractionalDifficulty);
     return bnWork;
